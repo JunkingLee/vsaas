@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vsaas-auth
+  namespace: vsaas
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vsaas-auth
+  template:
+    metadata:
+      labels:
+        app: vsaas-auth
+    spec:
+      containers:
+        - name: auth
+          image: your-registry/vsaas-auth:latest
+          ports:
+            - containerPort: 8001
+          envFrom:
+            - secretRef:
+                name: vsaas-env
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8001
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8001
+            initialDelaySeconds: 40
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vsaas-auth
+  namespace: vsaas
+spec:
+  selector:
+    app: vsaas-auth
+  ports:
+    - port: 8001
+      targetPort: 8001
