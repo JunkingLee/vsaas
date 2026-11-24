@@ -1,4 +1,3 @@
-# Production middleware stack. See docker/prod/README-PROD.md
 services:
   postgres:
     image: postgres:16
@@ -9,9 +8,25 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:7
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-}"]
     restart: unless-stopped
+
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    environment:
+      MODE: standalone
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    restart: unless-stopped
+
   minio:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
@@ -21,6 +36,7 @@ services:
     volumes:
       - miniodata:/data
     restart: unless-stopped
+
   srs:
     image: ossrs/srs:5
     volumes:
@@ -28,7 +44,9 @@ services:
     ports:
       - "1935:1935"
       - "8080:8080"
+      - "1985:1985"
     restart: unless-stopped
+
 volumes:
   pgdata:
   miniodata:

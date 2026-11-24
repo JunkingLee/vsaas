@@ -1,0 +1,29 @@
+# APISIX 路由示例
+# JWT Secret 必须与后端 vsaas.jwt.secret 一致
+#
+# 登录（不校验 JWT）:
+# curl http://127.0.0.1:9180/apisix/admin/routes/1 -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" -X PUT -d '{
+#   "uri": "/api/auth/login",
+#   "upstream": { "type": "roundrobin", "nodes": { "127.0.0.1:8001": 1 } }
+# }'
+#
+# 业务接口（JWT + 写入 X-Tenant-Id / X-User-Id）:
+# {
+#   "uri": "/api/device/*",
+#   "plugins": {
+#     "jwt-auth": {
+#       "key": "user-key",
+#       "secret": "vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes",
+#       "algorithm": "HS256"
+#     },
+#     "proxy-rewrite": {
+#       "headers": {
+#         "X-Tenant-Id": "$jwt_claim_tenant_id",
+#         "X-User-Id": "$jwt_claim_user_id"
+#       }
+#     }
+#   },
+#   "upstream": { "type": "roundrobin", "nodes": { "127.0.0.1:8002": 1 } }
+# }
+#
+# 端口: auth8001 device8002 media8003 tenant8004 record8005 alarm8006 billing8007 user8008
