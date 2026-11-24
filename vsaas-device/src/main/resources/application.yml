@@ -26,12 +26,11 @@ vsaas:
   wvp:
     enabled: ${WVP_ENABLED:false}
     base-url: ${WVP_BASE_URL:http://127.0.0.1:18080}
-    access-token: ${WVP_ACCESS_TOKEN:}
   jwt:
     secret: ${VSAAS_JWT_SECRET:vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes}
   device:
-    heartbeat-timeout-seconds: ${HEARTBEAT_TIMEOUT_SECONDS:120}
-    offline-check-interval-ms: ${OFFLINE_CHECK_INTERVAL_MS:30000}
+    heartbeat-timeout-seconds: 120
+    offline-check-interval-ms: 30000
   alarm:
     report-url: ${ALARM_REPORT_URL:http://127.0.0.1:8006/api/alarm/report}
 

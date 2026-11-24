@@ -20,7 +20,11 @@ vsaas:
     secret: ${VSAAS_JWT_SECRET:vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes}
   play:
     secret: ${VSAAS_PLAY_SECRET:vsaas-play-token-secret-change-me}
-    expire-seconds: ${VSAAS_PLAY_EXPIRE_SECONDS:3600}
+    expire-seconds: 3600
+
+logging:
+  level:
+    com.vsaas: info
 
 management:
   endpoints:

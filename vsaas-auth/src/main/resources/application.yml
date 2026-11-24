@@ -1,20 +1,37 @@
 server:
   port: 8001
+
 spring:
   application:
     name: vsaas-auth
-  flyway:
-    enabled: ${FLYWAY_ENABLED:false}
-    baseline-on-migrate: true
-    locations: classpath:db/migration
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:vsaas}
     username: ${DB_USER:vsaas}
     password: ${DB_PASSWORD:vsaas123}
     driver-class-name: org.postgresql.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        fail-fast: false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
 vsaas:
   jwt:
     secret: ${VSAAS_JWT_SECRET:vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes}
+    expire-ms: 604800000
+    key: user-key
+
+logging:
+  level:
+    com.vsaas: info
+
 management:
   endpoints:
     web:
