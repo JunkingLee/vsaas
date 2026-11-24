@@ -31,6 +31,17 @@ vsaas:
     monthly-cron: "0 0 2 1 * ?"
   pay:
     provider: ${VSAAS_PAY_PROVIDER:mock}
+    wechat:
+      app-id: ${WECHAT_APP_ID:}
+      mch-id: ${WECHAT_MCH_ID:}
+      api-v3-key: ${WECHAT_API_V3_KEY:}
+      notify-url: ${WECHAT_NOTIFY_URL:http://127.0.0.1:8007/api/billing/pay/callback}
+    alipay:
+      app-id: ${ALIPAY_APP_ID:}
+      notify-url: ${ALIPAY_NOTIFY_URL:http://127.0.0.1:8007/api/billing/pay/callback}
+      return-url: ${ALIPAY_RETURN_URL:}
+  mq:
+    rabbit-enabled: ${VSAAS_MQ_RABBIT:false}
 
 logging:
   level:

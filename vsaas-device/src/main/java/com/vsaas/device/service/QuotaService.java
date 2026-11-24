@@ -62,7 +62,7 @@ public class QuotaService {
         try {
             Integer cnt = jdbcTemplate.query(
                     """
-                    SELECT COUNT(1) FROM billing_bill
+                    SELECT COUNT(*) FROM billing_bill
                     WHERE tenant_id = ? AND status = 0
                       AND created_at < NOW() - INTERVAL '15 days'
                     """,

@@ -42,14 +42,11 @@ public class ArrearsService {
     }
 
     public boolean inArrears(Long tenantId) {
-        Object v = status(tenantId).get("inArrears");
-        return Boolean.TRUE.equals(v);
+        return Boolean.TRUE.equals(status(tenantId).get("inArrears"));
     }
 
     public void checkOrThrow(Long tenantId) {
-        if (!arrearsEnforce) {
-            return;
-        }
+        if (!arrearsEnforce) return;
         if (inArrears(tenantId)) {
             throw new BusinessException(402, "账户存在逾期未付账单，请先结清后再操作");
         }
