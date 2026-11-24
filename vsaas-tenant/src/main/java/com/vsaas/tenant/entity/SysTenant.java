@@ -15,6 +15,8 @@ public class SysTenant {
     private String tenantCode;
     private String tenantName;
     private Integer status;
+    private Long packageId;
+    private LocalDateTime expireTime;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

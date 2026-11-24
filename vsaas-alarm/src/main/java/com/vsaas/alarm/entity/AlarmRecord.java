@@ -16,8 +16,7 @@ public class AlarmRecord {
     private Long channelId;
     private String alarmType;
     private String alarmContent;
-    private Integer status;
     private LocalDateTime alarmTime;
-    private LocalDateTime handleTime;
+    private Integer status;
     private LocalDateTime createdAt;
 }
