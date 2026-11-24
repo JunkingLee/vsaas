@@ -16,12 +16,10 @@ public class StreamService {
     public Map<String, String> buildPlayUrls(String streamKey) {
         String app = srsProperties.getApp();
         String httpHost = srsProperties.getHttpHost().replaceAll("/$", "");
-
         Map<String, String> urls = new HashMap<>();
         urls.put("flv", httpHost + "/" + app + "/" + streamKey + ".flv");
         urls.put("hls", httpHost + "/" + app + "/" + streamKey + ".m3u8");
         urls.put("rtmp", "rtmp://" + httpHost.replace("http://", "").replace("https://", "") + "/" + app + "/" + streamKey);
-
         if (srsProperties.isWebrtcEnabled()) {
             urls.put("webrtc", httpHost + "/rtc/v1/whep/?app=" + app + "&stream=" + streamKey);
         }

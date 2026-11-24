@@ -20,7 +20,6 @@ public class AlarmWsHub {
 
     public void register(Long tenantId, WebSocketSession session) {
         sessions.computeIfAbsent(tenantId, k -> ConcurrentHashMap.newKeySet()).add(session);
-        log.info("WS 接入 tenant={} session={}", tenantId, session.getId());
     }
 
     public void unregister(WebSocketSession session) {
@@ -29,19 +28,13 @@ public class AlarmWsHub {
 
     public void pushToTenant(Long tenantId, DomainEvent event) {
         Set<WebSocketSession> set = sessions.get(tenantId);
-        if (set == null || set.isEmpty()) {
-            return;
-        }
+        if (set == null || set.isEmpty()) return;
         try {
             String json = objectMapper.writeValueAsString(event);
             TextMessage msg = new TextMessage(json);
             for (WebSocketSession s : set) {
                 if (s.isOpen()) {
-                    try {
-                        s.sendMessage(msg);
-                    } catch (Exception e) {
-                        log.warn("WS 推送失败 session={}: {}", s.getId(), e.getMessage());
-                    }
+                    try { s.sendMessage(msg); } catch (Exception ignored) {}
                 }
             }
         } catch (Exception e) {

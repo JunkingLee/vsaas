@@ -10,7 +10,6 @@ public class TenantInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String tenantId = request.getHeader("X-Tenant-Id");
         String userId = request.getHeader("X-User-Id");
-
         if (tenantId != null && !tenantId.isEmpty()) {
             TenantContext.setTenantId(Long.valueOf(tenantId));
         }

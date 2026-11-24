@@ -24,14 +24,12 @@ public class MockPaymentGateway implements PaymentGateway {
         data.put("billNo", billNo);
         data.put("amount", amount);
         data.put("payUrl", "/api/billing/pay/mock/confirm?tradeNo=" + tradeNo + "&billId=" + billId);
-        data.put("message", "模拟支付：打开 payUrl 或调用 confirm 接口即视为成功");
-        log.info("创建模拟支付单 tradeNo={} billId={} amount={}", tradeNo, billId, amount);
+        data.put("message", "模拟支付");
         return data;
     }
 
     @Override
     public boolean handleCallback(Map<String, String> params) {
-        log.info("模拟支付回调 params={}", params);
         return "SUCCESS".equalsIgnoreCase(params.getOrDefault("status", "SUCCESS"));
     }
 }
