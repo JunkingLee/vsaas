@@ -1,12 +1,14 @@
 import request from '../utils/request'
 
-const AUTH = 'http://127.0.0.1:8001'
-const DEVICE = 'http://127.0.0.1:8002'
-const MEDIA = 'http://127.0.0.1:8003'
-const RECORD = 'http://127.0.0.1:8005'
-const ALARM = 'http://127.0.0.1:8006'
-const BILLING = 'http://127.0.0.1:8007'
-const USER = 'http://127.0.0.1:8008'
+// 开发可直连各端口；Docker 全栈 / 生产设 VITE_API_BASE='' 走同源 nginx 反代
+const BASE = import.meta.env.VITE_API_BASE
+const AUTH = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8001'
+const DEVICE = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8002'
+const MEDIA = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8003'
+const RECORD = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8005'
+const ALARM = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8006'
+const BILLING = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8007'
+const USER = BASE !== undefined && BASE !== null ? BASE : 'http://127.0.0.1:8008'
 
 export const login = (data) => request.post(AUTH + '/api/auth/login', data)
 export const refreshToken = () => request.post(AUTH + '/api/auth/refresh')
