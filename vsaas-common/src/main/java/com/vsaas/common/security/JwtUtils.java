@@ -31,7 +31,6 @@ public class JwtUtils {
         claims.put("tenant_id", tenantId);
         claims.put("username", username);
         claims.put("key", jwtProperties.getKey());
-
         return Jwts.builder()
                 .claims(claims)
                 .subject(String.valueOf(userId))
