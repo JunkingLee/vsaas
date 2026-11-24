@@ -3,34 +3,37 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>com.vsaas</groupId>
     <artifactId>vsaas-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>VSaaS Parent</name>
+    <name>vsaas-parent</name>
+    <description>Video Surveillance as a Service - Parent POM</description>
 
     <modules>
         <module>vsaas-common</module>
         <module>vsaas-api</module>
         <module>vsaas-auth</module>
+        <module>vsaas-tenant</module>
+        <module>vsaas-user</module>
         <module>vsaas-device</module>
         <module>vsaas-media</module>
-        <module>vsaas-tenant</module>
         <module>vsaas-record</module>
         <module>vsaas-alarm</module>
         <module>vsaas-billing</module>
-        <module>vsaas-user</module>
     </modules>
 
     <properties>
-        <java.version>17</java.version>
-        <spring-boot.version>3.2.5</spring-boot.version>
-        <spring-cloud.version>2023.0.1</spring-cloud.version>
-        <spring-cloud-alibaba.version>2023.0.1.0</spring-cloud-alibaba.version>
-        <mybatis-plus.version>3.5.6</mybatis-plus.version>
-        <jjwt.version>0.12.5</jjwt.version>
-        <hutool.version>5.8.27</hutool.version>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring-boot.version>3.3.5</spring-boot.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <spring-cloud-alibaba.version>2023.0.1.2</spring-cloud-alibaba.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
+        <jjwt.version>0.12.6</jjwt.version>
+        <hutool.version>5.8.32</hutool.version>
+        <lombok.version>1.18.34</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -107,9 +110,9 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
                     <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
+                        <release>${java.version}</release>
                         <encoding>UTF-8</encoding>
+                        <parameters>true</parameters>
                     </configuration>
                 </plugin>
             </plugins>

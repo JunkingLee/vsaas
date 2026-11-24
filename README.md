@@ -1,6 +1,6 @@
 # VSaaS 视频监控云平台
 
-Java 17 + Spring Boot 3.x + SRS + APISIX + PostgreSQL + MinIO + Vue3
+Java 21 + Spring Boot 3.3 + SRS + APISIX + PostgreSQL + MinIO + Vue3
 
 ## 设计文档
 
@@ -27,23 +27,21 @@ Java 17 + Spring Boot 3.x + SRS + APISIX + PostgreSQL + MinIO + Vue3
 | user | 8008 | RBAC |
 | frontend | 3000 | 管理后台 |
 
+## 环境要求
+
+- **JDK 21**
+- Maven 3.9+
+- Docker（中间件）
+- Node 18+（前端）
+
 ## 快速启动
 
 ```bash
-# 基础设施
-cd docker && docker compose up -d
-
-# 库表
-psql -U vsaas -d vsaas -f sql/01-schema-core.sql
-psql -U vsaas -d vsaas -f sql/02-schema-billing-rbac.sql
-psql -U vsaas -d vsaas -f sql/seed-demo.sql
-
-# 后端（各模块）
+bash scripts/start-dev.sh
 mvn -pl vsaas-auth -am spring-boot:run
-# ... device media record alarm billing user tenant
-
-# 前端
+# ... 其他模块
 cd frontend && npm i && npm run dev
 ```
 
-演示账号：`admin` / `admin123`
+演示账号：`admin` / `admin123`  
+联调：[CLOSED_LOOP.md](CLOSED_LOOP.md)
