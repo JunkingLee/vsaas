@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = "com.vsaas")
-@MapperScan("com.vsaas.record.mapper")
 @EnableScheduling
+@MapperScan("com.vsaas.record.mapper")
 public class RecordApplication {
     public static void main(String[] args) {
         SpringApplication.run(RecordApplication.class, args);
