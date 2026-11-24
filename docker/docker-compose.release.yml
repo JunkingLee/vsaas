@@ -1,0 +1,240 @@
+name: vsaas-release
+
+x-app-env: &app-env
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_NAME: ${DB_NAME:-vsaas}
+  DB_USER: ${DB_USER:-vsaas}
+  DB_PASSWORD: ${DB_PASSWORD:-vsaas123}
+  NACOS_ADDR: nacos:8848
+  VSAAS_JWT_SECRET: ${VSAAS_JWT_SECRET:-vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes}
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: vsaas-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-vsaas}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-vsaas123}
+      POSTGRES_DB: ${DB_NAME:-vsaas}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ../sql/01-schema-core.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ../sql/02-schema-billing-rbac.sql:/docker-entrypoint-initdb.d/02-schema.sql:ro
+      - ../sql/seed-demo.sql:/docker-entrypoint-initdb.d/03-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    container_name: vsaas-redis
+    ports:
+      - "6379:6379"
+
+  nacos:
+    image: nacos/nacos-server:v2.4.3
+    container_name: vsaas-nacos
+    environment:
+      MODE: standalone
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+      NACOS_AUTH_ENABLE: "false"
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - nacos_data:/home/nacos/data
+
+  minio:
+    image: minio/minio:latest
+    container_name: vsaas-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin123}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  srs:
+    image: ossrs/srs:5
+    container_name: vsaas-srs
+    ports:
+      - "1935:1935"
+      - "1985:1985"
+      - "8080:8080"
+    volumes:
+      - ./srs/srs.conf:/usr/local/srs/conf/srs.conf:ro
+    command: ["./objs/srs", "-c", "conf/srs.conf"]
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: vsaas-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-vsaas}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-vsaas123}
+
+  auth:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-auth.jar
+    image: vsaas-auth:release
+    container_name: vsaas-auth
+    environment:
+      <<: *app-env
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  device:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-device.jar
+    image: vsaas-device:release
+    container_name: vsaas-device
+    environment:
+      <<: *app-env
+      ALARM_REPORT_URL: http://alarm:8006/api/alarm/report
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  media:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-media.jar
+    image: vsaas-media:release
+    container_name: vsaas-media
+    environment:
+      <<: *app-env
+      SRS_HTTP_HOST: ${SRS_HTTP_HOST:-http://srs:8080}
+      SRS_API_HOST: http://srs:1985
+      VSAAS_PLAY_SECRET: ${VSAAS_PLAY_SECRET:-vsaas-play-token-secret-change-me}
+    ports:
+      - "8003:8003"
+    depends_on:
+      - srs
+
+  tenant:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-tenant.jar
+    image: vsaas-tenant:release
+    container_name: vsaas-tenant
+    environment:
+      <<: *app-env
+    ports:
+      - "8004:8004"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  record:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-record.jar
+    image: vsaas-record:release
+    container_name: vsaas-record
+    environment:
+      <<: *app-env
+      VSAAS_HOOK_SECRET: ${VSAAS_HOOK_SECRET:-vsaas-hook-secret-change-me}
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin123}
+    ports:
+      - "8005:8005"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  alarm:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-alarm.jar
+    image: vsaas-alarm:release
+    container_name: vsaas-alarm
+    environment:
+      <<: *app-env
+    ports:
+      - "8006:8006"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  billing:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-billing.jar
+    image: vsaas-billing:release
+    container_name: vsaas-billing
+    environment:
+      <<: *app-env
+      VSAAS_PAY_PROVIDER: ${VSAAS_PAY_PROVIDER:-mock}
+    ports:
+      - "8007:8007"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  user:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.runtime
+      args:
+        JAR_FILE: release/jars/vsaas-user.jar
+    image: vsaas-user:release
+    container_name: vsaas-user
+    environment:
+      <<: *app-env
+    ports:
+      - "8008:8008"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend.runtime
+    image: vsaas-frontend:release
+    container_name: vsaas-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth
+      - device
+
+volumes:
+  pg_data:
+  nacos_data:
+  minio_data:

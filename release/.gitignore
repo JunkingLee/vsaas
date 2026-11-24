@@ -1,0 +1,4 @@
+jars/*.jar
+web/**
+!jars/.gitkeep
+!web/.gitkeep
