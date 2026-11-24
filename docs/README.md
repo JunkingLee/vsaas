@@ -9,4 +9,5 @@
 | [05-部署运维手册](./05-部署运维手册.md) | 环境、启动、配置、监控、备份 |
 | [06-安全设计](./06-安全设计.md) | 认证授权、防盗链、Hook 鉴权、配额与欠费 |
 
-业务闭环与联调步骤见根目录 [CLOSED_LOOP.md](../CLOSED_LOOP.md)。
+业务闭环与联调步骤见根目录 [CLOSED_LOOP.md](../CLOSED_LOOP.md)。  
+生产环境变量模板见 [docker/prod/](../docker/prod/)。
