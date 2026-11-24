@@ -1,26 +1,49 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:16
+    container_name: vsaas-postgres
     environment:
-      POSTGRES_DB: vsaas
       POSTGRES_USER: vsaas
       POSTGRES_PASSWORD: vsaas123
+      POSTGRES_DB: vsaas
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
+      - ../sql/01-schema-core.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ../sql/02-schema-billing-rbac.sql:/docker-entrypoint-initdb.d/02-schema.sql
+      - ../sql/seed-demo.sql:/docker-entrypoint-initdb.d/03-seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vsaas"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
-    image: redis:7
+    image: redis:7-alpine
+    container_name: vsaas-redis
     ports:
       - "6379:6379"
+
   nacos:
-    image: nacos/nacos-server:v2.3.2
+    image: nacos/nacos-server:v2.4.3
+    container_name: vsaas-nacos
     environment:
       MODE: standalone
+      JVM_XMS: 512m
+      JVM_XMX: 512m
+      NACOS_AUTH_ENABLE: "false"
     ports:
       - "8848:8848"
+      - "9848:9848"
+    volumes:
+      - nacos_data:/home/nacos/data
+
   minio:
     image: minio/minio:latest
+    container_name: vsaas-minio
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -28,21 +51,31 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+    volumes:
+      - minio_data:/data
+
   srs:
     image: ossrs/srs:5
-    volumes:
-      - ./srs/srs.conf:/usr/local/srs/conf/srs.conf
+    container_name: vsaas-srs
     ports:
       - "1935:1935"
-      - "8080:8080"
       - "1985:1985"
+      - "8080:8080"
+    volumes:
+      - ./srs/srs.conf:/usr/local/srs/conf/srs.conf
+    command: ["./objs/srs", "-c", "conf/srs.conf"]
+
   rabbitmq:
     image: rabbitmq:3.13-management
+    container_name: vsaas-rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: vsaas
       RABBITMQ_DEFAULT_PASS: vsaas123
+
 volumes:
-  pgdata:
+  pg_data:
+  nacos_data:
+  minio_data:

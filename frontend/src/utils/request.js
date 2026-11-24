@@ -11,15 +11,9 @@ request.interceptors.request.use(config => {
   const token = localStorage.getItem('token')
   const tenantId = localStorage.getItem('tenantId')
   const userId = localStorage.getItem('userId')
-  if (token) {
-    config.headers['Authorization'] = 'Bearer ' + token
-  }
-  if (tenantId) {
-    config.headers['X-Tenant-Id'] = tenantId
-  }
-  if (userId) {
-    config.headers['X-User-Id'] = userId
-  }
+  if (token) config.headers['Authorization'] = 'Bearer ' + token
+  if (tenantId) config.headers['X-Tenant-Id'] = tenantId
+  if (userId) config.headers['X-User-Id'] = userId
   return config
 })
 

@@ -2,16 +2,16 @@
   <div class="login-page">
     <el-card class="login-card">
       <h2>VSaaS 视频监控云平台</h2>
-      <el-form :model="form" @submit.prevent="onLogin">
+      <el-form :model="form" @submit.prevent>
         <el-form-item>
           <el-input v-model="form.username" placeholder="用户名" prefix-icon="User" />
         </el-form-item>
         <el-form-item>
           <el-input v-model="form.password" type="password" placeholder="密码" prefix-icon="Lock" show-password />
         </el-form-item>
-        <el-button type="primary" style="width:100%" :loading="loading" @click="onLogin">登 录</el-button>
+        <el-button type="primary" style="width:100%" :loading="loading" @click="onLogin">登录</el-button>
       </el-form>
-      <p class="tip">演示账号：admin / admin123</p>
+      <p class="tip">演示账号 admin / admin123</p>
     </el-card>
   </div>
 </template>
@@ -33,10 +33,9 @@ async function onLogin() {
     localStorage.setItem('token', res.data.token)
     localStorage.setItem('tenantId', res.data.tenantId)
     localStorage.setItem('userId', res.data.userId)
-    localStorage.setItem('username', res.data.username)
+    localStorage.setItem('username', res.data.username || form.username)
     ElMessage.success('登录成功')
-    router.push('/')
-  } catch (e) {
+    router.push('/dashboard')
   } finally {
     loading.value = false
   }
@@ -51,19 +50,7 @@ async function onLogin() {
   justify-content: center;
   background: linear-gradient(135deg, #1d2b64 0%, #f8cdda 100%);
 }
-.login-card {
-  width: 380px;
-  padding: 20px;
-}
-.login-card h2 {
-  text-align: center;
-  margin-bottom: 24px;
-  color: #303133;
-}
-.tip {
-  text-align: center;
-  color: #909399;
-  font-size: 13px;
-  margin-top: 16px;
-}
+.login-card { width: 380px; padding: 20px; }
+.login-card h2 { text-align: center; margin-bottom: 24px; }
+.tip { text-align: center; color: #909399; font-size: 13px; margin-top: 16px; }
 </style>
