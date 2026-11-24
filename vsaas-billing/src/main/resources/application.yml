@@ -1,0 +1,43 @@
+server:
+  port: 8007
+
+spring:
+  application:
+    name: vsaas-billing
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:vsaas}
+    username: ${DB_USER:vsaas}
+    password: ${DB_PASSWORD:vsaas123}
+    driver-class-name: org.postgresql.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        fail-fast: false
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
+vsaas:
+  jwt:
+    secret: ${VSAAS_JWT_SECRET:vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes}
+  billing:
+    overdue-days: 15
+    arrears-enforce: true
+    monthly-cron: "0 0 2 1 * ?"
+  pay:
+    provider: ${VSAAS_PAY_PROVIDER:mock}
+
+logging:
+  level:
+    com.vsaas: info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

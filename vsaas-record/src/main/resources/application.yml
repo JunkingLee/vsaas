@@ -1,0 +1,54 @@
+server:
+  port: 8005
+
+spring:
+  application:
+    name: vsaas-record
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:vsaas}
+    username: ${DB_USER:vsaas}
+    password: ${DB_PASSWORD:vsaas123}
+    driver-class-name: org.postgresql.Driver
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        fail-fast: false
+  servlet:
+    multipart:
+      max-file-size: 512MB
+      max-request-size: 512MB
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    db-config:
+      id-type: auto
+
+vsaas:
+  jwt:
+    secret: ${VSAAS_JWT_SECRET:vsaas-jwt-secret-key-2026-please-change-it-to-very-long-string-at-least-32-bytes}
+  hook:
+    secret: ${VSAAS_HOOK_SECRET:}
+    auth-enabled: ${VSAAS_HOOK_AUTH_ENABLED:false}
+  alarm:
+    report-url: ${ALARM_REPORT_URL:http://127.0.0.1:8006/api/alarm/report}
+  record:
+    upload-to-minio-on-dvr: true
+    cleanup-cron: "0 0 4 * * ?"
+  storage:
+    endpoint: ${MINIO_ENDPOINT:http://127.0.0.1:9000}
+    access-key: ${MINIO_ACCESS_KEY:minioadmin}
+    secret-key: ${MINIO_SECRET_KEY:minioadmin123}
+    bucket: ${MINIO_BUCKET:vsaas-record}
+
+logging:
+  level:
+    com.vsaas: info
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
