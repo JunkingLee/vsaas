@@ -1,8 +1,11 @@
 target/
-node_modules/
+*.class
+*.jar
+*.war
+*.log
 .idea/
 *.iml
+.vscode/
 .DS_Store
-*.log
+*.swp
 .env
-frontend/dist/

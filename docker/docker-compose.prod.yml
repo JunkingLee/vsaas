@@ -1,0 +1,34 @@
+# Production middleware stack. See docker/prod/README-PROD.md
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-vsaas}
+      POSTGRES_USER: ${DB_USER:-vsaas}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+  redis:
+    image: redis:7
+    restart: unless-stopped
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?}
+    volumes:
+      - miniodata:/data
+    restart: unless-stopped
+  srs:
+    image: ossrs/srs:5
+    volumes:
+      - ./srs/srs.conf:/usr/local/srs/conf/srs.conf
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+    restart: unless-stopped
+volumes:
+  pgdata:
+  miniodata:
