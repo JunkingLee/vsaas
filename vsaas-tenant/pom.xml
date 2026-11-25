@@ -9,6 +9,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>vsaas-tenant</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>com.vsaas</groupId>
@@ -36,7 +37,12 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
