@@ -1,0 +1,28 @@
+{
+  "pages": [
+    { "path": "pages/login/login", "style": { "navigationBarTitleText": "登录", "navigationStyle": "custom" } },
+    { "path": "pages/index/index", "style": { "navigationBarTitleText": "工作台" } },
+    { "path": "pages/device/list", "style": { "navigationBarTitleText": "设备" } },
+    { "path": "pages/live/live", "style": { "navigationBarTitleText": "实时预览" } },
+    { "path": "pages/playback/playback", "style": { "navigationBarTitleText": "录像回放" } },
+    { "path": "pages/alarm/list", "style": { "navigationBarTitleText": "告警" } },
+    { "path": "pages/mine/mine", "style": { "navigationBarTitleText": "我的" } }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "VSaaS",
+    "navigationBarBackgroundColor": "#1d2b64",
+    "backgroundColor": "#f5f6fa"
+  },
+  "tabBar": {
+    "color": "#909399",
+    "selectedColor": "#1d2b64",
+    "backgroundColor": "#ffffff",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "工作台" },
+      { "pagePath": "pages/device/list", "text": "设备" },
+      { "pagePath": "pages/alarm/list", "text": "告警" },
+      { "pagePath": "pages/mine/mine", "text": "我的" }
+    ]
+  }
+}
